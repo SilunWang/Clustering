@@ -4,9 +4,9 @@ from Utils import *
 from HierachyClustering import get_numpy_cosine
 
 
-def KMeans_clustering(k):
+def KMeans_clustering(k, num):
     cluster_centers = read_vector_file('../output/centers_' + str(k) + '.txt')
-    vectors = read_vector_file('../input/initial_feature_100.txt')
+    gl.vectors = read_vector_file('../input/initial_feature_100.txt', num)
     rounds = 0
 
     # start
@@ -17,28 +17,30 @@ def KMeans_clustering(k):
         nearest_center_map = {}
         # center -- points number
         points_num_map = {}
-        for vector_index in xrange(len(vectors)):
+        for center_index in xrange(len(cluster_centers)):
+            points_num_map[center_index] = 0
+        for vector_index in xrange(len(gl.vectors)):
             max_similarity = 0
             # find nearest center
             for center_index in xrange(len(cluster_centers)):
                 # similarity
-                cosine = get_numpy_cosine(vectors[vector_index], cluster_centers[center_index])
+                cosine = get_numpy_cosine(gl.vectors[vector_index], cluster_centers[center_index])
                 if cosine > max_similarity:
                     max_similarity = cosine
                     nearest_center_map[vector_index] = center_index
-                    if center_index in points_num_map:
-                        points_num_map[center_index] += 1
-                    else:
-                        points_num_map[center_index] = 1
+                    points_num_map[center_index] += 1
         # update centers' vectors
         for (vector_index, center_index) in nearest_center_map.items():
-            np.add(cluster_centers[center_index], vectors[vector_index])
+            np.add(cluster_centers[center_index], gl.vectors[vector_index])
         for index in xrange(len(cluster_centers)):
-            cluster_centers[index] /= (points_num_map[index] + 1)
+            try:
+                cluster_centers[index] /= (points_num_map[index] + 1)
+            except KeyError:
+                print index
 
     # end while
-    f = open('../output/kmeans_250.txt', 'w')
-    for index in xrange(len(vectors)):
-        cosine = get_numpy_cosine(vectors[index], cluster_centers[nearest_center_map[index]])
+    f = open('../output/kmeans_' + str(k) + '.txt', 'w')
+    for index in xrange(len(gl.vectors)):
+        cosine = get_numpy_cosine(gl.vectors[index], cluster_centers[nearest_center_map[index]])
         f.write(str(index) + '\t' + str(nearest_center_map[index]) + '\t' + str(cosine) + '\n')
     f.close()

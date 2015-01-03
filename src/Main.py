@@ -1,7 +1,13 @@
 __author__ = 'Allen'
+
 from KMeans import KMeans_clustering
 from HierachyClustering import hierachy_clustering
+from Utils import judge
 
-k = 250
+# cluster number
+k = 120
+# find initial centers
 hierachy_clustering(k, 4000)
-KMeans_clustering(k)
+# update
+KMeans_clustering(k, 20000)
+print "average similarity for " + str(k) + " is: " + str(judge(k))

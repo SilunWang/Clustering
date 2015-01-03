@@ -1,7 +1,7 @@
 __author__ = 'Allen'
 # utils
 
-from GlobalVars import centers
+import GlobalVars as gl
 import numpy as np
 import numpy.linalg as LA
 import math
@@ -35,10 +35,10 @@ def read_vector_file(url, bound=20000):
     result = []
     f = open(url)
     line = f.readline()
-    i = 0
+    i = 1
     while line:
-        str = line.split(' ')
-        result.append(np.asarray(map(float, str[0:len(str) - 1])))
+        strr = line.split(' ')
+        result.append(np.asarray(map(float, strr[0:len(strr) - 1])))
         line = f.readline()
         if i == bound:
             break
@@ -52,16 +52,28 @@ def write_center_file(center_num):
     f = open('../output/centers_' + str(center_num) + '.txt', 'w')
     center_list = []
     i = 0
-    for index in xrange(len(centers)):
+    for index in xrange(len(gl.centers)):
         if i == center_num:
             break
-        if centers[index][0] in center_list:
+        if gl.centers[index][0] in center_list:
             continue
         else:
-            center_list.append(centers[index][0])
+            center_list.append(gl.centers[index][0])
             i += 1
-            for iteration in xrange(len(centers[index][2])):
-                f.write(str(float(centers[index][2][iteration] / centers[index][1])) + " ")
+            for iteration in xrange(len(gl.centers[index][2])):
+                f.write(str(float(gl.centers[index][2][iteration] / gl.centers[index][1])) + " ")
             f.write("\n")
     f.close()
-    print i
+    print "i = " + str(i)
+
+
+def judge(k):
+    result = 0.0
+    f = open("../output/kmeans_" + str(k) + ".txt")
+    line = f.readline()
+    while line:
+        strr = line.split('\t')
+        result += float(strr[2])
+        line = f.readline()
+    f.close()
+    return result / 15018
