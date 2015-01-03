@@ -1,36 +1,10 @@
 # Author: Silun Wang
-# Clustering method
-import math
+# Hierachy Clustering
 from operator import itemgetter
 from collections import OrderedDict
 import multiprocessing
-import numpy.linalg as LA
-from globalVars import max_points_number, vectors, scores, clusters
-from fileUtils import *
-
-
-def get_cosine_Numpy(v1, v2):
-    up = np.dot(v1, v2)
-    down = LA.norm(v1, ord=2) * LA.norm(v2, ord=2)
-    if up == 0 or down == 0:
-        return 0
-    else:
-        return up / down
-
-
-def get_cosine(arr1, arr2):
-    up = 0.0
-    a_sq = 0.0
-    b_sq = 0.0
-    for a1, b1 in zip(arr1, arr2):
-        up += a1 * b1
-        a_sq += a1 * a1
-        b_sq += b1 * b1
-    down = math.sqrt(a_sq * b_sq)
-    if up == 0 or down == 0:
-        return 0
-    else:
-        return up / down
+from GlobalVars import max_points_number, vectors, scores, clusters
+from Utils import *
 
 
 def get_P2P_distance(start, end, que):
@@ -42,7 +16,7 @@ def get_P2P_distance(start, end, que):
         for yIndex in xrange(len(vectors)):
             # avoid  redundant computation
             if xIndex < yIndex:
-                cosine = get_cosine_Numpy(vectors[xIndex], vectors[yIndex])
+                cosine = get_numpy_cosine(vectors[xIndex], vectors[yIndex])
                 if cosine > 0:
                     p2pDist[str(xIndex) + "-" + str(yIndex)] = cosine
                     p2pDist[str(yIndex) + "-" + str(xIndex)] = cosine
@@ -58,14 +32,14 @@ def calculate_scores():
             for j in xrange(len(centers[i][2])):
                 centers[i][2][j] /= float(centers[i][1])
     for j in xrange(len(vectors)):
-        scores.append(get_cosine_Numpy(vectors[j], centers[clusters[j]][2]))
+        scores.append(get_numpy_cosine(vectors[j], centers[clusters[j]][2]))
     return
 
 
-def main():
+def hierachy_clustering(k, num):
     max_cluster_similarity = 0
     global vectors, centers, clusters
-    vectors = read_feature_file("../file/initial_feature_100.txt")
+    vectors = read_vector_file("../input/initial_feature_100.txt", num)
     # multiprocessing pool
     process_num = 6
     p2pDist = {}
@@ -125,8 +99,7 @@ def main():
 
     print "Cluster number: " + str(clusterNum)
     sorted(centers, key=lambda tup: tup[1], reverse=True)
-    #calculate_scores()
-    write_center_file('../output/centers_250.txt')
+    write_center_file(center_num=k)
     return
 
 
