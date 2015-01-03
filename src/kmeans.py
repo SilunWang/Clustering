@@ -42,5 +42,5 @@ def KMeans_clustering(k, num):
     f = open('../output/kmeans_' + str(k) + '.txt', 'w')
     for index in xrange(len(gl.vectors)):
         cosine = get_numpy_cosine(gl.vectors[index], cluster_centers[nearest_center_map[index]])
-        f.write(str(index) + '\t' + str(nearest_center_map[index]) + '\t' + str(cosine) + '\n')
+        f.write(str(index + 1) + '\t' + str(nearest_center_map[index] + 1) + '\t' + str(cosine) + '\n')
     f.close()

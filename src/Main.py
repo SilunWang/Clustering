@@ -2,7 +2,7 @@ __author__ = 'Allen'
 
 from KMeans import KMeans_clustering
 from HierachyClustering import hierachy_clustering
-from Utils import judge
+from Utils import judge, indexPlusOne
 
 # cluster number
 k = 120

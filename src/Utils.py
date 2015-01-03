@@ -77,3 +77,19 @@ def judge(k):
         line = f.readline()
     f.close()
     return result / 15018
+
+
+def indexPlusOne(k):
+    f = open("../output/kmeans_" + str(k) + ".txt")
+    f2 = open('../output/2kmeans_' + str(k) + '.txt', 'w')
+    line = f.readline()
+    while line:
+        strr = line.split('\t')
+        id = int(strr[0]) + 1
+        cluster = int(strr[1]) + 1
+        score = float(strr[2])
+        f2.write(str(id) + '\t' + str(cluster) + '\t' + str(score) + '\n')
+        line = f.readline()
+    f.close()
+    f2.close()
+    return
